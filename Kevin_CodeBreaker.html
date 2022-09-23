@@ -1,0 +1,135 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Kevin::CodeBreaker</title>
+		<style></style>
+		<script>
+			function initialize()
+			{
+				log = document.getElementById("log");
+				clock = document.getElementById("clock");
+				vault = document.getElementById("vault");
+				scoreDisplay = document.getElementById("score");
+				score = 0;
+				gameStart();
+			}
+			
+			function gameStart()
+			{
+				currentGuess = "<br/>";
+				vaultCode = "";
+				vaultTimer = 7;
+				eventLog = "This is the log:<br/>";
+				
+				vault.innerHTML = currentGuess;
+				clock.innerHTML = "Time: " + vaultTimer;
+				
+				for(var i = 0;i<3;i++)
+				{
+					vaultCode += genRandom(1,3);
+				}
+				//console.log(vaultCode);
+			}
+			
+			function endTurn()
+			{
+				if (guessCheck() == true) // win
+				{
+					score += vaultTimer;
+					scoreDisplay.innerHTML = "Score: " + score;
+					gameStart();
+				}
+				else // !win
+				{
+					if(vaultTimer == 0)
+					{
+						log.innerHTML += "You got nicked by the rozzers!!!!!";
+						score = 0;
+						scoreDisplay.innerHTML = "Score: " + score;
+						gameStart();
+					}
+					else
+					{
+						clearGuess();
+					}
+				}
+			}
+			
+			function guessCheck()
+			{
+				var guess = parseInt(currentGuess);
+				var code = parseInt(vaultCode);
+				var message = "";
+				var win = false;
+				var randEvent = genRandom(1,100);
+				vaultTimer--;
+				if(guess < code)
+				{
+					message = "Guess is less than code";
+				}
+				else if(guess > code)
+				{
+					message = "Guess is greater than code";
+				}
+				else
+				{
+					message = "You guessed the code correctly!";
+					win = true;
+					vaultTimer++;
+				}
+				message = guess + "-->" + message; 
+				
+				if(randEvent < 6)
+				{
+					message += "<br/>Traffic Jam [+1 turn] <br/>";
+					vaultTimer++;
+				}
+				eventLog += message + "<br/>";
+				//console.log(message);
+				//console.log(win);
+				log.innerHTML = eventLog;
+				clock.innerHTML = "Time: " + vaultTimer;
+				return win;
+			}
+			
+		
+			function addGuess(num)
+			{
+				if(currentGuess === "<br/>")
+				{
+					currentGuess = "";
+				}
+				currentGuess += num;
+				vault.innerHTML = currentGuess;
+				if(currentGuess.length == 3)
+				{
+					endTurn();
+				}
+			}
+			
+			function clearGuess()
+			{
+				currentGuess = "<br/>";
+				vault.innerHTML = currentGuess;
+			}
+			function genRandom(min,max)
+			{
+				return Math.floor((Math.random()*max)+min);
+			}
+
+			
+		</script>
+	</head>
+	<body onload = "initialize();">
+		<h1 id = "instructions">There is a 3 letter code, Guess it within 7 turns</h1>
+		<h1 id = "clock">Time:</h1>
+		<h1 id = "vault"><br/></h1>
+		<button onclick = "addGuess(1);">1</button>
+		<button onclick = "addGuess(2);">2</button>
+		<button onclick = "addGuess(3);">3</button>
+		<button onclick = "clearGuess();">Clear</button>
+		<h1 id = "score">Score: 0</h1>
+		<h1 id = "log">This is the log:<br/></h1>
+		
+	</body>
+</html>
